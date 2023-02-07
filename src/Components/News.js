@@ -2,56 +2,48 @@ import React, { Component } from 'react'
 import NewsItem from './NewsItem'
 
 export class News extends Component {
-  articles =  [
-    {
-      "source": {
-        "id": null,
-        "name": "Marketscreener.com"
-      },
-      "author": "MarketScreener",
-      "title": "Goldilocks is back! Markets start 2023 in red-hot form",
-      "description": "(marketscreener.com) From stocks to government\nbonds, markets have had one of their best starts to the year in\ndecades but whether the run lasts depends on a Goldilocks\nscenario of inflation easing, economic growth holding up and\nborrowing costs falling.\n Aft…",
-      "url": "https://www.marketscreener.com/quote/stock/TESLA-INC-6344549/news/Goldilocks-is-back-Markets-start-2023-in-red-hot-form-42851919/?utm_medium=RSS&utm_content=20230131",
-      "urlToImage": "https://www.marketscreener.com/images/twitter_MS_fdblanc.png",
-      "publishedAt": "2023-01-31T07:00:00Z",
-      "content": "LONDON, Jan 31 (Reuters) - From stocks to government\r\nbonds, markets have had one of their best starts to the year in\r\ndecades but whether the run lasts depends on a Goldilocks\r\nscenario of inflation… [+4077 chars]"
-    },
-    {
-      "source": {
-        "id": null,
-        "name": "Biztoc.com"
-      },
-      "author": "benzinga.com",
-      "title": "Ford Mach-E Price Cuts Right Strategic Move, Says Analyst: Why Tesla Is 'Uniquely Positioned' In This 'Game Of Thrones Battle'",
-      "description": "Ford Motor Co. F announced on Monday that it was lowering the Mustang Mach-E electric vehicle prices across trims, which is seen as a reactive move to EV industry leader Tesla Inc.’s TSLA string of price cuts. What Happened: Tesla’s up to 20% price cuts annou…",
-      "url": "https://biztoc.com/x/f588c3b6561a5c39",
-      "urlToImage": "https://c.biztoc.com/p/f588c3b6561a5c39/og.webp",
-      "publishedAt": "2023-01-31T06:48:09Z",
-      "content": "Ford Motor Co. F announced on Monday that it was lowering the Mustang Mach-E electric vehicle prices across trims, which is seen as a reactive move to EV industry leader Tesla Inc.s TSLA string of pr… [+301 chars]"
-    },
-    {
-      "source": {
-        "id": null,
-        "name": "Carriermanagement.com"
-      },
-      "author": "Susanne Sclafane",
-      "title": "Tesla Competing With ‘GEICOs of the World’ to Lower Insurance Prices",
-      "description": "While executives of Tesla said the car maker’s insurance business isn’t yet big enough to warrant separate financial disclosure of its results, Chief Executive Officer Elon Musk reiterated a benefit for Tesla owners: cheaper premiums. Speaking on an earnings …",
-      "url": "https://www.carriermanagement.com/news/2023/01/26/244733.htm",
-      "urlToImage": "https://www.insurancejournal.com/app/uploads/2022/10/elon-musk-caricature-bigstock.jpg",
-      "publishedAt": "2023-01-31T06:45:58Z",
-      "content": "New You can now listen to Insurance Journal articles!While executives of Tesla said the car maker’s insurance business isn’t yet big enough to warrant separate financial disclosure of its results, Ch… [+7989 chars]"
-    }
-  ]
-
-  constructor(){
+  articles =  []
+  constructor(){ //runs first
     super();
     this.state = {
       articles: this.articles,
-      loading: false
+      loading: false,
+      page: 1
     }
   }
 
+  async componentDidMount(){ //componentDidMount() is a library function and it runs before render(). we have made it async
+    let url = "https://newsapi.org/v2/top-headlines?country=in&apiKey=78d1ac17821f4fba9844a374b5227817";
+    let data = await fetch(url);
+    let parsedData = await data.json()
+    this.setState({articles: parsedData.articles, totalResults: parsedData.totalResults})
+  }
+
+  handlePrevClick = async ()=>{
+    let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=78d1ac17821f4fba9844a374b5227817&page=${this.state.page-1}&pageSize=20`;
+    let data = await fetch(url);
+    let parsedData = await data.json()
+    this.setState({
+      articles: parsedData.articles,
+      page: this.state.page - 1
+    })
+  }
+
+  handleNextClick = async ()=>{
+    if(this.state.page+1 > Math.ceil(this.state.totalResults/20)){
+
+    }
+
+    else{
+    let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=78d1ac17821f4fba9844a374b5227817&page=${this.state.page+1}&pageSize=20`;
+    let data = await fetch(url);
+    let parsedData = await data.json()
+    this.setState({
+      articles: parsedData.articles,
+      page: this.state.page + 1
+    })
+    }
+  }
   render() {
     return (
       <div>
@@ -61,14 +53,17 @@ export class News extends Component {
             {this.state.articles.map((element)=>{
 
               return  <div className="col-md-4" key = {element.url}>
-                <NewsItem title = {element.title.slice(0,45)} description = {element.description.slice(0,88)} imageUrl = {element.urlToImage} newsUrl = {element.url}/>
+                <NewsItem title = {element.title?element.title.slice(0,45):""} description = {element.description?element.description.slice(0,88):""} imageUrl = {element.urlToImage?element.urlToImage:""} newsUrl = {element.url}/>
                 </div>
 
             })}
         
             </div>
         </div>
-        
+        <div className="container d-flex justify-content-between">
+            <button type="button" disabled = {this.state.page <= 1} className="btn btn-dark" onClick={this.handlePrevClick}>&larr; Previous</button> 
+            <button type="button" className="btn btn-dark" onClick={this.handleNextClick}>Next &rarr;</button> 
+        </div> 
       </div>
     )
   }
