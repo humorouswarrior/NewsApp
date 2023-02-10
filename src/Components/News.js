@@ -23,8 +23,8 @@ export class News extends Component {
     }
   }
 
-  async componentDidMount(){ //componentDidMount() is a library function and it runs before render(). we have made it async
-    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=78d1ac17821f4fba9844a374b5227817&pageSize=${this.props.pageSize}`;
+  async updateNews(){ //this was create while refactoring the file
+    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=78d1ac17821f4fba9844a374b5227817&page=${this.state.page}&pageSize=${this.props.pageSize}`;
     this.setState({loading: true})
     let data = await fetch(url);
     let parsedData = await data.json()
@@ -33,28 +33,43 @@ export class News extends Component {
       loading: false})
   }
 
+  async componentDidMount(){ //componentDidMount() is a library function and it runs before render(). we have made it async
+    // let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=78d1ac17821f4fba9844a374b5227817&pageSize=${this.props.pageSize}`;
+    // this.setState({loading: true})
+    // let data = await fetch(url);
+    // let parsedData = await data.json()
+    // this.setState({articles: parsedData.articles, 
+    //   totalResults: parsedData.totalResults,
+    //   loading: false})
+    this.updateNews()
+  }
+
   handlePrevClick = async ()=>{
-    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=78d1ac17821f4fba9844a374b5227817&page=${this.state.page-1}&pageSize=${this.props.pageSize}`;
-    this.setState({loading: true})
-    let data = await fetch(url);
-    let parsedData = await data.json()
-    this.setState({
-      articles: parsedData.articles,
-      page: this.state.page - 1,
-      loading: false
-    })
+    // let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=78d1ac17821f4fba9844a374b5227817&page=${this.state.page-1}&pageSize=${this.props.pageSize}`;
+    // this.setState({loading: true})
+    // let data = await fetch(url);
+    // let parsedData = await data.json()
+    // this.setState({
+    //   articles: parsedData.articles,
+    //   page: this.state.page - 1,
+    //   loading: false
+    // })
+    this.setState({page:this.state.page-1})
+    this.updateNews()
   }
 
   handleNextClick = async ()=>{
-    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=78d1ac17821f4fba9844a374b5227817&page=${this.state.page+1}&pageSize=${this.props.pageSize}`;
-    this.setState({loading: true})
-    let data = await fetch(url);
-    let parsedData = await data.json()
-    this.setState({
-      articles: parsedData.articles,
-      page: this.state.page + 1,
-      loading: false
-    })
+    // let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=78d1ac17821f4fba9844a374b5227817&page=${this.state.page+1}&pageSize=${this.props.pageSize}`;
+    // this.setState({loading: true})
+    // let data = await fetch(url);
+    // let parsedData = await data.json()
+    // this.setState({
+    //   articles: parsedData.articles,
+    //   page: this.state.page + 1,
+    //   loading: false
+    // })
+    this.setState({page:this.state.page+1})
+    this.updateNews()
     
   }
   render() {
@@ -67,7 +82,7 @@ export class News extends Component {
             {!this.state.loading && this.state.articles.map((element)=>{
 
               return  <div className="col-md-4" key = {element.url}>
-                <NewsItem title = {element.title?element.title.slice(0,45):""} description = {element.description?element.description.slice(0,88):""} imageUrl = {element.urlToImage?element.urlToImage:""} newsUrl = {element.url}/>
+                <NewsItem title = {element.title?element.title.slice(0,45):""} description = {element.description?element.description.slice(0,88):""} imageUrl = {element.urlToImage?element.urlToImage:""} newsUrl = {element.url} author = {element.author} source = {element.source.name}/>
                 </div>
 
             })}
