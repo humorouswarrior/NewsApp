@@ -32,7 +32,7 @@ export class News extends Component {
     };
     document.title = `${this.capitaliseFirstLetter(
       this.props.category
-    )} - NewsMonkey`;
+    )} - YouNews`;
   }
 
   async updateNews() {
@@ -81,8 +81,8 @@ export class News extends Component {
     return (
       <div>
         <div>
-          <h2 className="text-center" style={{ margin: "30px" }}>
-            NewsMonkey - Top Headlines
+          <h2 className="text-center" style={{ margin: "30px", fontFamily: 'Varela Round', fontSize: '2.3rem'}}>
+            YouNews - Top Headlines
           </h2>
           {this.state.loading && <Spinner />}
           <InfiniteScroll
