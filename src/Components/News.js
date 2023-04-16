@@ -100,9 +100,9 @@ export class News extends Component {
           >
             <div className="container">
               <div className="row">
-                {this.state.articles.map((element) => {
+                {this.state.articles.map((element,index) => {
                   return (
-                    <div className="col-md-4" key={element.url}>
+                    <div className="col-md-4" key={index}>
                       <NewsItem
                         title={element.title ? element.title.slice(0, 45) : ""}
                         description={
